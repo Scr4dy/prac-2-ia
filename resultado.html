@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>Resultado del Diagnóstico</title></head>
+<body>
+    <h2>Probabilidades de Enfermedades</h2>
+    <ul>
+        {% for enf, prob in enfermedades.items() %}
+            <li><strong>{{ enf }}</strong>: {{ prob * 100 }}%</li>
+        {% endfor %}
+    </ul>
+    <a href="/">← Volver</a>
+</body>
+</html>
