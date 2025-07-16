@@ -6,6 +6,8 @@ Scripts/
 share/
 
 node_modules/
+__pycache__/
+*.pyc
 
 pyvenv.cfg
 input.css
