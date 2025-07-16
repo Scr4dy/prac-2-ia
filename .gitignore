@@ -2,10 +2,9 @@
 Include/
 Lib/
 Scripts/
-
 share/
-
 node_modules/
+
 __pycache__/
 *.pyc
 
