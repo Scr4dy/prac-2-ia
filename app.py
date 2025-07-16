@@ -1,40 +1,35 @@
-# app.py
-from flask import Flask, request, send_from_directory, render_template_string
+from flask import Flask, request, render_template
 from modelo import crear_modelo
 
 app = Flask(__name__)
 inferencia = crear_modelo()
 
+# Lista de nombres de síntomas esperados
+SINTOMAS = [
+    'Fiebre', 'Tos', 'Fatiga', 'Olfato', 'Congestion',
+    'Dolor', 'Respirar', 'Edad', 'Comorbilidad'
+]
+
 @app.route('/')
 def home():
-    return send_from_directory('.', 'formulario.html')
-
+    return render_template('formulario.html')
 
 @app.route('/diagnostico', methods=['POST'])
 def diagnostico():
-    sintomas = {
-        'Fiebre': int(request.form['fiebre']),
-        'Tos': int(request.form['tos']),
-        'Fatiga': int(request.form['fatiga']),
-        'Olfato': int(request.form['olfato']),
-        'Congestion': int(request.form['congestion']),
-        'Dolor': int(request.form['dolor']),
-        'Respirar': int(request.form['respirar']),
-        'Edad': int(request.form['edad']),
-        'Comorbilidad': int(request.form['comorbilidad'])
-    }
+    try:
+        # Extrae y convierte los valores desde el formulario
+        sintomas = {sintoma: int(request.form[sintoma.lower()]) for sintoma in SINTOMAS}
+    except (KeyError, ValueError):
+        return "Error: Faltan datos o uno o más campos tienen formato incorrecto.", 400
 
+    # Diagnóstico de enfermedades
     enfermedades = {}
     for enfermedad in ['COVID', 'Gripe', 'Alergia', 'Neumonía', 'Bronquitis']:
         resultado = inferencia.query([enfermedad], evidence=sintomas)
-        prob = float(resultado.values[1])  # valor del estado 'sí'
+        prob = float(resultado.values[1])  # type: ignore
         enfermedades[enfermedad] = round(prob, 3)
 
-    with open('resultado.html', 'r', encoding='utf-8') as f:
-        plantilla = f.read()
-
-    return render_template_string(plantilla, enfermedades=enfermedades)
-
+    return render_template('resultado.html', enfermedades=enfermedades)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

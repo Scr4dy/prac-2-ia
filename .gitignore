@@ -3,6 +3,9 @@ Include/
 Lib/
 Scripts/
 
+share/
+
 node_modules/
 
 pyvenv.cfg
+input.css
